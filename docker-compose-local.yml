@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   jupyter-ml:
-    image: simcore/services/dynamic/${IMAGE_TO_RUN}:${DOCKER_IMAGE_TAG}
+    image: simcore/services/dynamic/${IMAGE_TO_RUN}:${TAG_TO_RUN}
     ports:
       - 8888:8888
     environment:

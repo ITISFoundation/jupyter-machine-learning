@@ -1,10 +1,10 @@
 SHELL = /bin/sh
 .DEFAULT_GOAL := help
 
-export DOCKER_IMAGE_TAG= 2.0.0
-
 export IMAGE_PYTORCH=jupyter-ml-pytorch
 export IMAGE_TENSORFLOW=jupyter-ml-tensorflow
+export TAG_PYTORCH=2.0.0
+export TAG_TENSORFLOW=2.0.0
 
 define _bumpversion
 	# upgrades as $(subst $(1),,$@) version, commits and tags
@@ -33,17 +33,21 @@ build: compose-spec ## build docker images
 
 .PHONY: run-pytorch-local
 run-pytorch-local: ## runs pytorch image with local configuration
-	IMAGE_TO_RUN=${IMAGE_PYTORCH} docker-compose --file docker-compose-local.yml up
+	IMAGE_TO_RUN=${IMAGE_PYTORCH} \
+	TAG_TO_RUN=${TAG_PYTORCH} \
+	docker-compose --file docker-compose-local.yml up
 
 .PHONY: run-tensorflow-local
 run-tensorflow-local: ## runs tensorflow image with local configuration
-	IMAGE_TO_RUN=${IMAGE_TENSORFLOW} docker-compose --file docker-compose-local.yml up
+	IMAGE_TO_RUN=${IMAGE_TENSORFLOW} \
+	TAG_TO_RUN=${TAG_TENSORFLOW} \
+	docker-compose --file docker-compose-local.yml up
 
 publish-local:  ## push to local throw away registry to test integration
-	@docker tag simcore/services/dynamic/${IMAGE_PYTORCH}:${DOCKER_IMAGE_TAG} registry:5000/simcore/services/dynamic/${IMAGE_PYTORCH}:${DOCKER_IMAGE_TAG}
-	@docker tag simcore/services/dynamic/${IMAGE_TENSORFLOW}:${DOCKER_IMAGE_TAG} registry:5000/simcore/services/dynamic/${IMAGE_TENSORFLOW}:${DOCKER_IMAGE_TAG}
-	@docker push registry:5000/simcore/services/dynamic/${IMAGE_PYTORCH}:${DOCKER_IMAGE_TAG}
-	@docker push registry:5000/simcore/services/dynamic/${IMAGE_TENSORFLOW}:${DOCKER_IMAGE_TAG}
+	@docker tag simcore/services/dynamic/${IMAGE_PYTORCH}:${TAG_PYTORCH} registry:5000/simcore/services/dynamic/${IMAGE_PYTORCH}:${TAG_PYTORCH}
+	@docker tag simcore/services/dynamic/${IMAGE_TENSORFLOW}:${TAG_TENSORFLOW} registry:5000/simcore/services/dynamic/${IMAGE_TENSORFLOW}:${TAG_TENSORFLOW}
+	@docker push registry:5000/simcore/services/dynamic/${IMAGE_PYTORCH}:${TAG_PYTORCH}
+	@docker push registry:5000/simcore/services/dynamic/${IMAGE_TENSORFLOW}:${TAG_TENSORFLOW}
 
 .PHONY: help
 help: ## this colorful help

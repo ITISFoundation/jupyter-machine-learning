@@ -15,9 +15,15 @@ define _bumpversion
 endef
 
 .PHONY: version-tensorflow-patch version-tensorflow-minor version-tensorflow-major
-version-tensorflow-patch version-tensorflow-minor version-tensorflow-major: .bumpversion-tensorflow.cfg ## increases service's version
+version-tensorflow-patch version-tensorflow-minor version-tensorflow-major: .bumpversion-tensorflow.cfg ## increases tensroflow service's version
 	@make compose-spec
 	@$(call _bumpversion,$<,version-tensorflow-)
+	@make compose-spec
+
+.PHONY: version-pytorch-patch version-pytorch-minor version-pytorch-major
+version-pytorch-patch version-pytorch-minor version-pytorch-major: .bumpversion-tensorflow.cfg ## increases pytorchservice's version
+	@make compose-spec
+	@$(call _bumpversion,$<,version-pytorch-)
 	@make compose-spec
 
 .PHONY: compose-spec

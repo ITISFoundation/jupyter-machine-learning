@@ -14,10 +14,10 @@ define _bumpversion
 		sh -c "cd /iseg && bump2version --verbose --list --config-file $(1) $(subst $(2),,$@)"
 endef
 
-.PHONY: version-patch version-minor version-major
-version-patch version-minor version-major: .bumpversion.cfg ## increases service's version
+.PHONY: version-tensorflow-patch version-tensorflow-minor version-tensorflow-major
+version-tensorflow-patch version-tensorflow-minor version-tensorflow-major: .bumpversion-tensorflow.cfg ## increases service's version
 	@make compose-spec
-	@$(call _bumpversion,$<,version-)
+	@$(call _bumpversion,$<,version-tensorflow-)
 	@make compose-spec
 
 .PHONY: compose-spec

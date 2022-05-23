@@ -21,7 +21,7 @@ version-tensorflow-patch version-tensorflow-minor version-tensorflow-major: .bum
 	@make compose-spec
 
 .PHONY: version-pytorch-patch version-pytorch-minor version-pytorch-major
-version-pytorch-patch version-pytorch-minor version-pytorch-major: .bumpversion-tensorflow.cfg ## increases pytorchservice's version
+version-pytorch-patch version-pytorch-minor version-pytorch-major: .bumpversion-pytorch.cfg ## increases pytorchservice's version
 	@make compose-spec
 	@$(call _bumpversion,$<,version-pytorch-)
 	@make compose-spec

@@ -30,6 +30,7 @@ settings:
           - DiscreteResourceSpec:
               Kind: AIRAM
               Value: 1
+restart-policy: no-restart
 paths-mapping:
   inputs_path: /home/jovyan/work/inputs
   outputs_path: /home/jovyan/work/outputs

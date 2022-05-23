@@ -30,3 +30,8 @@ settings:
           - DiscreteResourceSpec:
               Kind: AIRAM
               Value: 1
+paths-mapping:
+  inputs_path: /home/jovyan/work/inputs
+  outputs_path: /home/jovyan/work/outputs
+  state_paths:
+    - /home/jovyan/work/workspace

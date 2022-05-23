@@ -1,0 +1,5 @@
+services:
+  jupyter-ml-pytorch:
+    build:
+      context: ./jupyter-ml-pytorch
+      dockerfile: Dockerfile

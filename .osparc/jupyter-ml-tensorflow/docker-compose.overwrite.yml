@@ -1,0 +1,5 @@
+services:
+  jupyter-ml-tensorflow:
+    build:
+      context: ./jupyter-ml-tensorflow
+      dockerfile: Dockerfile

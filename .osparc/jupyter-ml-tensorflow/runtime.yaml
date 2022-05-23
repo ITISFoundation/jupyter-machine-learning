@@ -1,0 +1,32 @@
+settings:
+  - name: ports
+    type: int
+    value: 8888
+  - name: env
+    type: string
+    value:
+      - DISPLAY=:0
+  - name: mount
+    type: object
+    value:
+      - ReadOnly: true
+        Source: /tmp/.X11-unix
+        Target: /tmp/.X11-unix
+        Type: bind
+  - name: constraints
+    type: string
+    value:
+      - node.platform.os == linux
+  - name: Resources
+    type: Resources
+    value:
+      Limits:
+        NanoCPUs: 4000000000
+        MemoryBytes: 17179869184
+      Reservations:
+        NanoCPUs: 100000000
+        MemoryBytes: 536870912
+        GenericResources:
+          - DiscreteResourceSpec:
+              Kind: AIRAM
+              Value: 1

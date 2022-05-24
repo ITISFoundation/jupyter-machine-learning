@@ -9,8 +9,6 @@ echo "$INFO" "Starting container ..."
 echo "$INFO" "  User    :$(id "$(whoami)")"
 echo "$INFO" "  Workdir :$(pwd)"
 
-echo "$INFO" "Running service init.sh"
-source /docker/init.bash
 
 # expect input/output folders to be mounted
 stat "${DY_SIDECAR_PATH_INPUTS}" > /dev/null 2>&1 || \

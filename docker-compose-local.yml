@@ -10,7 +10,6 @@ services:
       - DY_BOOT_OPTION_BOOT_MODE=0
       - DY_SIDECAR_PATH/home/jovyan/work/workspace
     volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix
       - ${PWD}/validation/workspace:/home/jovyan/work/workspace
       - ${PWD}/validation/inputs:/tmp/inputs
       - ${PWD}/validation/outputs:/tmp/outputs

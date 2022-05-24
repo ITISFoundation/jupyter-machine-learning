@@ -2,17 +2,6 @@ settings:
   - name: ports
     type: int
     value: 8888
-  - name: env
-    type: string
-    value:
-      - DISPLAY=:0
-  - name: mount
-    type: object
-    value:
-      - ReadOnly: true
-        Source: /tmp/.X11-unix
-        Target: /tmp/.X11-unix
-        Type: bind
   - name: constraints
     type: string
     value:
@@ -30,7 +19,6 @@ settings:
           - DiscreteResourceSpec:
               Kind: AIRAM
               Value: 1
-restart-policy: no-restart
 paths-mapping:
   inputs_path: /home/jovyan/work/inputs
   outputs_path: /home/jovyan/work/outputs

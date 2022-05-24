@@ -230,7 +230,6 @@ RUN conda install --quiet --yes \
 # sidecar functionality -------------------------------------
 
 ENV PYTHONPATH="/src:$PYTHONPATH"
-USER $NB_USER
 
 
 EXPOSE 8888
@@ -243,6 +242,41 @@ ENTRYPOINT [ "/bin/bash", "/docker/run.bash" ]
 RUN pip install voila && \
     jupyter serverextension enable voila && \
     jupyter server extension enable voila
+
+USER root
+# installing python via pyenv
+ARG PYTHON_VERSION=3.9.12
+ENV PYENV_ROOT $HOME/.pyenv
+ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    make \
+    build-essential \
+    libssl-dev \
+    zlib1g-dev \
+    libbz2-dev \
+    libreadline-dev \
+    libsqlite3-dev \
+    wget \
+    curl \
+    llvm \
+    libncurses5-dev \
+    xz-utils \
+    tk-dev \
+    libxml2-dev \
+    libxmlsec1-dev \
+    libffi-dev \
+    liblzma-dev \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+USER $NB_USER
+RUN git clone https://github.com/pyenv/pyenv.git ${HOME}/.pyenv && \
+    git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv && \
+    pyenv install ${PYTHON_VERSION} && \
+    pyenv virtualenv 3.9.12 lab-venv && \
+    ${HOME}/.pyenv/versions/lab-venv/bin/python --version && \
+    ${HOME}/.pyenv/versions/lab-venv/bin/pip install --upgrade pip ipykernel && \
+    ${HOME}/.pyenv/versions/lab-venv/bin/python -m ipykernel install --user --name kpy39 --display-name "Python (3.9.12)" && \
+    echo y | jupyter kernelspec uninstall python3
 
 USER root
 # Copying boot scripts

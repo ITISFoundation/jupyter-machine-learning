@@ -4,6 +4,7 @@
 ### Changed
 - service is now ran via `dynamic-sidecar`
 - upgraded `PyTorch` to version `1.11.0`
+- upgraded `python` to `3.9.12`
 
 ## [1.0.6] - 2021-06-22
 ### Changed

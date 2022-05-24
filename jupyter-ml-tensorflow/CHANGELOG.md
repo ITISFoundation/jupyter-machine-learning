@@ -4,7 +4,7 @@
 ### Changed
 - service is now ran via `dynamic-sidecar`
 - upgraded `TensorFlow` to version `2.9.0`
-
+- upgraded `python` to `3.9.12`
 ## [1.0.6] - 2021-06-22
 ### Changed
 - updates simcore service library to reduce cpu usage when extracting archives

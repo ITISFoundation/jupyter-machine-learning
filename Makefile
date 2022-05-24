@@ -8,10 +8,10 @@ export TAG_TENSORFLOW=2.0.0
 
 define _bumpversion
 	# upgrades as $(subst $(1),,$@) version, commits and tags
-	@docker run -it --rm -v $(PWD):/iseg \
+	@docker run -it --rm -v $(PWD):/ml-lab \
 		-u $(shell id -u):$(shell id -g) \
 		itisfoundation/ci-service-integration-library:v1.0.1-dev-31 \
-		sh -c "cd /iseg && bump2version --verbose --list --config-file $(1) $(subst $(2),,$@)"
+		sh -c "cd /ml-lab && bump2version --verbose --list --config-file $(1) $(subst $(2),,$@)"
 endef
 
 .PHONY: version-tensorflow-patch version-tensorflow-minor version-tensorflow-major
@@ -28,10 +28,10 @@ version-pytorch-patch version-pytorch-minor version-pytorch-major: .bumpversion-
 
 .PHONY: compose-spec
 compose-spec: ## runs ooil to assemble the docker-compose.yml file
-	@docker run -it --rm -v $(PWD):/iseg \
+	@docker run -it --rm -v $(PWD):/ml-lab \
 		-u $(shell id -u):$(shell id -g) \
 		itisfoundation/ci-service-integration-library:v1.0.1-dev-31 \
-		sh -c "cd /iseg && ooil compose"
+		sh -c "cd /ml-lab && ooil compose"
 
 .PHONY: build
 build: compose-spec ## build docker images

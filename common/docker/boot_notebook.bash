@@ -53,24 +53,6 @@ cat > .jupyter_config.json <<EOF
 }
 EOF
 
-set +e
-if [ -z "${SPEAG_LICENSE_FILE-}" ]; then
-    for SERVER in "${SERVERS[@]}"; do
-        echo "Testing ${SERVER}"
-        SERVER_FOUND=`nc -z "${SERVER}" "${PORT}"`
-        if [ "$?" -eq 0 ]; then
-            echo "$INFO License server found at ${SERVER}:${PORT}"
-            export SPEAG_LICENSE_FILE="${PORT}"@"${SERVER}"
-            break
-        else
-            echo "$INFO License server NOT found at ${SERVER}:${PORT}"
-        fi
-    done
-fi
-set -e
-
-echo "$INFO SPEAG_LICENSE_FILE evaluates to" "${SPEAG_LICENSE_FILE:-}"
-
 if [ "${SC_BOOT_MODE:-0}" = "test-boot-script" ]
 then
     echo "$INFO" "Test mode, not starting service, printing env instead"

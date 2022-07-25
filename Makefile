@@ -3,8 +3,8 @@ SHELL = /bin/sh
 
 export IMAGE_PYTORCH=jupyter-ml-pytorch
 export IMAGE_TENSORFLOW=jupyter-ml-tensorflow
-export TAG_PYTORCH=2.1.0
-export TAG_TENSORFLOW=2.1.0
+export TAG_PYTORCH=2.0.2
+export TAG_TENSORFLOW=2.0.2
 
 define _bumpversion
 	# upgrades as $(subst $(1),,$@) version, commits and tags

@@ -2,7 +2,7 @@ name: Jupyter ML Tensorflow
 thumbnail: https://i.imgur.com/iKoFIN0.png
 description: "JupyterLab with Tensorflow installed. No other scientific tools are provided."
 key: simcore/services/dynamic/jupyter-ml-tensorflow
-version: 2.1.0
+version: 2.0.2
 integration-version: "2.0.0"
 type: dynamic
 authors:

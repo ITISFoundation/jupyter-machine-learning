@@ -2,7 +2,7 @@ name: Jupyter ML PyTorch
 thumbnail: https://imgur.com/0ndE7uX.png
 description: "JupyterLab with PyTorch installed. No other scientific tools are provided."
 key: simcore/services/dynamic/jupyter-ml-pytorch
-version: 2.1.0
+version: 2.0.2
 integration-version: "2.0.0"
 type: dynamic
 authors:

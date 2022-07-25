@@ -1,4 +1,4 @@
-FROM nvidia/cuda:11.0.3-cudnn8-runtime-ubuntu18.04 as ml-base
+FROM nvidia/cuda:11.2.1-cudnn8-runtime-ubuntu18.04 as ml-base
 
 LABEL maintainer="Andrei Neagu <neagu@speag.swiss>"
 
@@ -291,6 +291,6 @@ ENV DY_SIDECAR_PATH_INPUTS="$HOME/.hidden_inputs" \
 # copy README and CHANGELOG
 COPY --chown=$NB_UID:$NB_GID README.ipynb ${NOTEBOOK_BASE_DIR}/README.ipynb
 
-ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/cuda-11.0/lib64"
+ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/cuda-11.2/lib64"
 
 RUN echo 'source /home/${NB_USER}/.pyenv/versions/lab-venv/bin/activate' >> "/home/${NB_USER}/.bashrc"

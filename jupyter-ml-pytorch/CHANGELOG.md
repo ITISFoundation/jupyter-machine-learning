@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.1.0] - 2022-07-25
+- Bumping up cuda from `11.0` to `11.2`
+
 ## [2.0.1] - 2022-05-08
 - shell and kernel now use the same python interpreter
 - fixes issue crashing when trusting notebooks

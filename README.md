@@ -1,5 +1,6 @@
 # jupyter-ml-tensorflow and jupyter-ml-pytorch
 
+This repository contains the source code for two o²S²PARC Services: jupyyter-ml-tensorflow and jupyter-ml-pytorch
 
 Building the docker images:
 

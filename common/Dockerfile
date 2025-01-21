@@ -1,4 +1,4 @@
-FROM nvidia/cuda:11.2.1-cudnn8-runtime-ubuntu18.04 as ml-base
+FROM nvidia/cuda:11.2.2-cudnn8-runtime-ubuntu18.04 AS ml-base
 
 LABEL maintainer="Andrei Neagu <neagu@speag.swiss>"
 

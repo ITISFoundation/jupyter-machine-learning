@@ -35,19 +35,19 @@ compose-spec: ## runs ooil to assemble the docker-compose.yml file
 
 .PHONY: build
 build: compose-spec ## build docker images
-	docker-compose build
+	docker compose build
 
 .PHONY: run-pytorch-local
 run-pytorch-local: ## runs pytorch image with local configuration
 	IMAGE_TO_RUN=${IMAGE_PYTORCH} \
 	TAG_TO_RUN=${TAG_PYTORCH} \
-	docker-compose --file docker-compose-local.yml up
+	docker compose --file docker-compose-local.yml up
 
 .PHONY: run-tensorflow-local
 run-tensorflow-local: ## runs tensorflow image with local configuration
 	IMAGE_TO_RUN=${IMAGE_TENSORFLOW} \
 	TAG_TO_RUN=${TAG_TENSORFLOW} \
-	docker-compose --file docker-compose-local.yml up
+	docker compose --file docker-compose-local.yml up
 
 publish-local:  ## push to local throw away registry to test integration
 	@docker tag simcore/services/dynamic/${IMAGE_PYTORCH}:${TAG_PYTORCH} registry:5000/simcore/services/dynamic/${IMAGE_PYTORCH}:${TAG_PYTORCH}

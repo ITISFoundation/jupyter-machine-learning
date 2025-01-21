@@ -1,5 +1,7 @@
 services:
   jupyter-ml-tensorflow:
+    depends_on: 
+      - common
     build:
       context: ./jupyter-ml-tensorflow
       dockerfile: Dockerfile

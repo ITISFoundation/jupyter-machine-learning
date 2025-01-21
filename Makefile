@@ -10,7 +10,7 @@ define _bumpversion
 	# upgrades as $(subst $(1),,$@) version, commits and tags
 	@docker run -it --rm -v $(PWD):/ml-lab \
 		-u $(shell id -u):$(shell id -g) \
-		itisfoundation/ci-service-integration-library:v1.0.1-dev-31 \
+		itisfoundation/ci-service-integration-library:v2.0.9-dev \
 		sh -c "cd /ml-lab && bump2version --verbose --list --config-file $(1) $(subst $(2),,$@)"
 endef
 
@@ -30,7 +30,7 @@ version-pytorch-patch version-pytorch-minor version-pytorch-major: .bumpversion-
 compose-spec: ## runs ooil to assemble the docker-compose.yml file
 	@docker run -it --rm -v $(PWD):/ml-lab \
 		-u $(shell id -u):$(shell id -g) \
-		itisfoundation/ci-service-integration-library:v1.0.1-dev-31 \
+		itisfoundation/ci-service-integration-library:v2.0.9-dev \
 		sh -c "cd /ml-lab && ooil compose"
 
 .PHONY: build

@@ -62,60 +62,36 @@ RUN echo "auth requisite pam_deny.so" >> /etc/pam.d/su && \
 
 USER $NB_UID
 WORKDIR $HOME
-ARG PYTHON_VERSION=default
+ARG PYTHON_VERSION=3.7
 
 # Setup work directory for backward-compatibility
 RUN mkdir /home/$NB_USER/work && \
     fix-permissions /home/$NB_USER
 
-# Install conda as jovyan and check the md5 sum provided on the download site
-ENV MINICONDA_VERSION=4.8.2 \
-    MINICONDA_MD5=87e77f097f6ebb5127c77662dfc3165e \
-    CONDA_VERSION=4.8.2
-
+ENV MAMBAFORGE_VERSION=23.1.0-1
 RUN cd /tmp && \
-    wget --quiet https://repo.continuum.io/miniconda/Miniconda3-py37_${MINICONDA_VERSION}-Linux-x86_64.sh && \
-    echo "${MINICONDA_MD5} *Miniconda3-py37_${MINICONDA_VERSION}-Linux-x86_64.sh" | md5sum -c - && \
-    /bin/bash Miniconda3-py37_${MINICONDA_VERSION}-Linux-x86_64.sh -f -b -p $CONDA_DIR && \
-    rm Miniconda3-py37_${MINICONDA_VERSION}-Linux-x86_64.sh && \
-    echo "conda ${CONDA_VERSION}" >> $CONDA_DIR/conda-meta/pinned && \
-    conda config --system --prepend channels conda-forge && \
-    conda config --system --set auto_update_conda false && \
-    conda config --system --set show_channel_urls true && \
-    conda config --system --set channel_priority strict && \
-    if [ ! $PYTHON_VERSION = 'default' ]; then conda install --yes python=$PYTHON_VERSION; fi && \
-    conda list python | grep '^python ' | tr -s ' ' | cut -d '.' -f 1,2 | sed 's/$/.*/' >> $CONDA_DIR/conda-meta/pinned && \
-    conda install --quiet --yes conda && \
-    conda install --quiet --yes pip && \
-    conda update --all --quiet --yes && \
-    conda clean --all -f -y && \
-    rm -rf /home/$NB_USER/.cache/yarn && \
-    fix-permissions $CONDA_DIR && \
-    fix-permissions /home/$NB_USER
-
-# Install Tini
-RUN conda install --quiet --yes 'tini=0.18.0' && \
-    conda list tini | grep tini | tr -s ' ' | cut -d ' ' -f 1,2 >> $CONDA_DIR/conda-meta/pinned && \
-    conda clean --all -f -y && \
-    fix-permissions $CONDA_DIR && \
-    fix-permissions /home/$NB_USER
-
-# Install Jupyter Notebook, Lab, and Hub
-# Generate a notebook server config
-# Cleanup temporary files
-# Correct permissions
-# Do all this in a single RUN command to avoid duplicating all of the
-# files across image layers when the permissions change
-RUN conda install --quiet --yes \
+    wget --quiet "https://github.com/conda-forge/miniforge/releases/download/${MAMBAFORGE_VERSION}/Mambaforge-${MAMBAFORGE_VERSION}-Linux-x86_64.sh" && \
+    /bin/bash Mambaforge-${MAMBAFORGE_VERSION}-Linux-x86_64.sh -f -b -p $CONDA_DIR && \
+    rm Mambaforge-${MAMBAFORGE_VERSION}-Linux-x86_64.sh && \
+    mamba config --system --prepend channels conda-forge && \
+    mamba config --system --set auto_update_conda false && \
+    mamba config --system --set show_channel_urls true && \
+    mamba config --system --set channel_priority strict && \
+    mamba config --system --set repodata_threads 5 && \
+    mamba install --yes python=$PYTHON_VERSION && \
+    mamba list python | grep '^python ' | tr -s ' ' | cut -d '.' -f 1,2 | sed 's/$/.*/' >> $CONDA_DIR/conda-meta/pinned && \
+    mamba list tini | grep tini | tr -s ' ' | cut -d ' ' -f 1,2 >> $CONDA_DIR/conda-meta/pinned && \
+    mamba install --yes \
+    pip \
+    'tini=0.18.0' \
     'notebook=6.4.8' \
     'jupyterhub=2.1.1' \
     'jupyterlab=3.2.9' && \
-    conda clean --all -f -y && \
+    mamba clean --all -f -y && \
     npm cache clean --force && \
     jupyter notebook --generate-config && \
     rm -rf $CONDA_DIR/share/jupyter/lab/staging && \
     rm -rf /home/$NB_USER/.cache/yarn && \
-    fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER
 
 # Copy local files as late as possible to avoid cache busting
@@ -212,14 +188,14 @@ USER $NB_UID
 # jupyter customizations
 # https://github.com/jupyterlab/jupyterlab-git/releases
 #
-RUN conda install --quiet --yes \
+RUN mamba install --quiet --yes \
     jupyterlab-git \
     # https://github.com/jupyterlab/jupyterlab-latex/
     jupyterlab_latex \
-    && conda install -c conda-forge \
+    && mamba install -c conda-forge \
     ipyevents==2.0.1 \
     ipympl==0.8.8 \
-    && conda clean --all -f -y \
+    && mamba clean --all -f -y \
     && jupyter lab build -y \
     && jupyter lab clean -y \
     && npm cache clean --force \
@@ -273,10 +249,10 @@ USER $NB_USER
 RUN git clone https://github.com/pyenv/pyenv.git ${HOME}/.pyenv && \
     git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv && \
     pyenv install ${PYTHON_VERSION} && \
-    pyenv virtualenv 3.9.12 lab-venv && \
+    pyenv virtualenv ${PYTHON_VERSION} lab-venv && \
     ${HOME}/.pyenv/versions/lab-venv/bin/python --version && \
     ${HOME}/.pyenv/versions/lab-venv/bin/pip install --upgrade pip ipykernel && \
-    ${HOME}/.pyenv/versions/lab-venv/bin/python -m ipykernel install --user --name kpy39 --display-name "Python (3.9.12)" && \
+    ${HOME}/.pyenv/versions/lab-venv/bin/python -m ipykernel install --user --name kpy39 --display-name "Python (${PYTHON_VERSION})" && \
     echo y | jupyter kernelspec uninstall python3
 
 USER root

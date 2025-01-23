@@ -17,7 +17,7 @@ settings:
         MemoryBytes: 536870912
         GenericResources:
           - DiscreteResourceSpec:
-              Kind: AIRAM
+              Kind: VRAM
               Value: 1
 paths-mapping:
   inputs_path: /home/jovyan/work/inputs

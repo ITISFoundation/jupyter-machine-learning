@@ -13,3 +13,4 @@ RUN $HOME/.pyenv/versions/lab-venv/bin/pip --no-cache install \
 
 USER root
 ENV TF_FORCE_GPU_ALLOW_GROWTH=true
+

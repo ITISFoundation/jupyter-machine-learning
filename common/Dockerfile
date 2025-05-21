@@ -1,4 +1,4 @@
-FROM nvidia/cuda:11.2.2-cudnn8-runtime-ubuntu18.04 AS ml-base
+FROM nvidia/cuda:12.8.0-cudnn-runtime-ubuntu24.04 AS ml-base
 
 LABEL maintainer="Andrei Neagu <neagu@speag.swiss>"
 
@@ -48,12 +48,20 @@ RUN chmod a+rx /usr/local/bin/fix-permissions
 # Enable prompt color in the skeleton .bashrc before creating the default NB_USER
 RUN sed -i 's/^#force_color_prompt=yes/force_color_prompt=yes/' /etc/skel/.bashrc
 
-# Create NB_USER wtih name jovyan user with UID=1000 and in the 'users' group
+# Create NB_USER with name jovyan user with UID=1000 and in the 'users' group
 # and make sure these dirs are writable by the `users` group.
 RUN echo "auth requisite pam_deny.so" >> /etc/pam.d/su && \
     sed -i.bak -e 's/^%admin/#%admin/' /etc/sudoers && \
     sed -i.bak -e 's/^%sudo/#%sudo/' /etc/sudoers && \
-    useradd -m -s /bin/bash -N -u $NB_UID $NB_USER && \
+    # Check if the user with UID 1000 already exists
+    if id -u $NB_UID >/dev/null 2>&1; then \
+        # Either modify existing user or create a different UID
+        usermod -l $NB_USER $(id -nu $NB_UID) && \
+        usermod -d /home/$NB_USER -m $NB_USER; \
+    else \
+        # Create the user normally
+        useradd -m -s /bin/bash -N -u $NB_UID $NB_USER; \
+    fi && \
     mkdir -p $CONDA_DIR && \
     chown $NB_USER:$NB_GID $CONDA_DIR && \
     chmod g+w /etc/passwd && \
@@ -62,7 +70,7 @@ RUN echo "auth requisite pam_deny.so" >> /etc/pam.d/su && \
 
 USER $NB_UID
 WORKDIR $HOME
-ARG PYTHON_VERSION=3.7
+ARG MAMBA_PYTHON_VERSION=3.7
 
 # Setup work directory for backward-compatibility
 RUN mkdir /home/$NB_USER/work && \
@@ -78,7 +86,7 @@ RUN cd /tmp && \
     mamba config --system --set show_channel_urls true && \
     mamba config --system --set channel_priority strict && \
     mamba config --system --set repodata_threads 5 && \
-    mamba install --yes python=$PYTHON_VERSION && \
+    mamba install --yes python=$MAMBA_PYTHON_VERSION && \
     mamba list python | grep '^python ' | tr -s ' ' | cut -d '.' -f 1,2 | sed 's/$/.*/' >> $CONDA_DIR/conda-meta/pinned && \
     mamba list tini | grep tini | tr -s ' ' | cut -d ' ' -f 1,2 >> $CONDA_DIR/conda-meta/pinned && \
     mamba install --yes \
@@ -121,12 +129,12 @@ RUN apt-get update && apt-get install -yq --no-install-recommends \
     libxext-dev \
     libxrender1 \
     lmodern \
-    netcat \
-    python-dev \
+    netcat-openbsd \
+    python-dev-is-python3 \
     # ---- nbconvert dependencies ----
     texlive-xetex \
     texlive-fonts-recommended \
-    texlive-generic-recommended \
+    texlive-plain-generic \
     # Optional dependency
     texlive-fonts-extra \
     # ----
@@ -215,14 +223,15 @@ CMD ["start-notebook.sh"]
 ENTRYPOINT [ "/bin/bash", "/docker/run.bash" ]
 
 
-# Install voila parts. This may done higher up in the chain such that the other flavors also have it
+# Install voila parts. This is done higher up in the chain such that the other flavors also have it
 RUN pip install voila && \
     jupyter serverextension enable voila && \
     jupyter server extension enable voila
 
 USER root
 # installing python via pyenv
-ARG PYTHON_VERSION=3.9.12
+
+ARG PYTHON_VERSION=3.12.10
 ENV PYENV_ROOT $HOME/.pyenv
 ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
 RUN apt-get update && \
@@ -252,7 +261,7 @@ RUN git clone https://github.com/pyenv/pyenv.git ${HOME}/.pyenv && \
     pyenv virtualenv ${PYTHON_VERSION} lab-venv && \
     ${HOME}/.pyenv/versions/lab-venv/bin/python --version && \
     ${HOME}/.pyenv/versions/lab-venv/bin/pip install --upgrade pip ipykernel && \
-    ${HOME}/.pyenv/versions/lab-venv/bin/python -m ipykernel install --user --name kpy39 --display-name "Python (${PYTHON_VERSION})" && \
+    ${HOME}/.pyenv/versions/lab-venv/bin/python -m ipykernel install --user --name kpy312 --display-name "Python (${PYTHON_VERSION})" && \
     echo y | jupyter kernelspec uninstall python3
 
 USER root
@@ -267,6 +276,6 @@ ENV DY_SIDECAR_PATH_INPUTS="$HOME/.hidden_inputs" \
 # copy README and CHANGELOG
 COPY --chown=$NB_UID:$NB_GID README.ipynb ${NOTEBOOK_BASE_DIR}/README.ipynb
 
-ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/cuda-11.2/lib64"
+ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/cuda-12.8/lib64"
 
 RUN echo 'source /home/${NB_USER}/.pyenv/versions/lab-venv/bin/activate' >> "/home/${NB_USER}/.bashrc"

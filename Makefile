@@ -3,7 +3,7 @@ SHELL = /bin/sh
 
 export IMAGE_PYTORCH=jupyter-ml-pytorch
 export IMAGE_TENSORFLOW=jupyter-ml-tensorflow
-export TAG_PYTORCH=2.1.0
+export TAG_PYTORCH=2.2.0
 export TAG_TENSORFLOW=2.2.0
 
 define _bumpversion

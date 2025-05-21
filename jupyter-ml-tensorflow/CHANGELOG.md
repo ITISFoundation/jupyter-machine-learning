@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.1.0] - 2025-05-21
+- upgraded ubuntu base to 20.04
+- upgraded CUDA to 12.8
+- upgraded python to 3.12.10
+- upgraded tensorflow to latest available version `tensorflow[and-cuda]==2.18.1`
+
+## [2.1.0] - 2025-01-24
+- replaced AIRAM with VRAM
+
 ## [2.0.2] - 2022-07-25
 - Bumping up cuda from `11.0` to `11.2`
   

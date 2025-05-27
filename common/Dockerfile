@@ -228,40 +228,20 @@ RUN pip install voila && \
     jupyter serverextension enable voila && \
     jupyter server extension enable voila
 
-USER root
-# installing python via pyenv
+# Install uv tool
+COPY --from=ghcr.io/astral-sh/uv:0.7.6 /uv /uvx /bin/
+ENV UV_HTTP_TIMEOUT=120
 
+# Install Python
 ARG PYTHON_VERSION=3.12.10
-ENV PYENV_ROOT $HOME/.pyenv
-ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    make \
-    build-essential \
-    libssl-dev \
-    zlib1g-dev \
-    libbz2-dev \
-    libreadline-dev \
-    libsqlite3-dev \
-    wget \
-    curl \
-    llvm \
-    libncurses5-dev \
-    xz-utils \
-    tk-dev \
-    libxml2-dev \
-    libxmlsec1-dev \
-    libffi-dev \
-    liblzma-dev \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
-USER $NB_USER
-RUN git clone https://github.com/pyenv/pyenv.git ${HOME}/.pyenv && \
-    git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv && \
-    pyenv install ${PYTHON_VERSION} && \
-    pyenv virtualenv ${PYTHON_VERSION} lab-venv && \
-    ${HOME}/.pyenv/versions/lab-venv/bin/python --version && \
-    ${HOME}/.pyenv/versions/lab-venv/bin/pip install --upgrade pip ipykernel && \
-    ${HOME}/.pyenv/versions/lab-venv/bin/python -m ipykernel install --user --name kpy312 --display-name "Python (${PYTHON_VERSION})" && \
+ENV UV_PYTHON_INSTALL_DIR="$HOME/.uv-python"
+ENV UV_CACHE_DIR="$HOME/.uv-cache"
+RUN mkdir -p $HOME/.uv-python \
+    && mkdir -p $HOME/.uv-cache \
+    && uv venv $HOME/.venv --python=python${PYTHON_VERSION%.*}
+ENV PATH="$HOME/.venv/bin:$PATH"
+RUN uv pip install --upgrade pip ipykernel && \
+    python -m ipykernel install --user --name kpy312 --display-name "Python (${PYTHON_VERSION})" && \
     echo y | jupyter kernelspec uninstall python3
 
 USER root
@@ -278,4 +258,4 @@ COPY --chown=$NB_UID:$NB_GID README.ipynb ${NOTEBOOK_BASE_DIR}/README.ipynb
 
 ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/cuda-12.8/lib64"
 
-RUN echo 'source /home/${NB_USER}/.pyenv/versions/lab-venv/bin/activate' >> "/home/${NB_USER}/.bashrc"
+RUN echo 'source $HOME/.venv/bin/activate' >> "/home/${NB_USER}/.bashrc"

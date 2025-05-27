@@ -9,7 +9,6 @@ COPY --chown=$NB_UID:$NB_GID CHANGELOG.md ${NOTEBOOK_BASE_DIR}/CHANGELOG.md
 # Change to NB_USER, otherwise packages installed below will belong to root
 USER $NB_USER 
 # NOTE: below is the offical way to install pytorch from the docs
-RUN $HOME/.pyenv/versions/lab-venv/bin/pip --no-cache install \
-    -r ${NOTEBOOK_BASE_DIR}/requirements.txt
+RUN uv pip install -r ${NOTEBOOK_BASE_DIR}/requirements.txt
 
 USER root

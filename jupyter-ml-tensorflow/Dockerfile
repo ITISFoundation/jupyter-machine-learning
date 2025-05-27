@@ -8,8 +8,7 @@ COPY --chown=$NB_UID:$NB_GID CHANGELOG.md ${NOTEBOOK_BASE_DIR}/CHANGELOG.md
 # Change to NB_USER, otherwise packages installed below will belong to root
 USER $NB_USER
 ## TODO: ensure is up-to-date before copying it
-RUN $HOME/.pyenv/versions/lab-venv/bin/pip --no-cache install \
-    -r ${NOTEBOOK_BASE_DIR}/requirements.txt
+RUN uv pip install -r ${NOTEBOOK_BASE_DIR}/requirements.txt
 
 USER root
 ENV TF_FORCE_GPU_ALLOW_GROWTH=true
